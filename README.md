@@ -486,10 +486,23 @@ docker run -itd --net rednet --name c2 busybox sh
 
 --name: The --name switch assigns a custom name to the container for easy reference__.
 
-2. Explore the network using the command ```docker network ls```, show the output of your terminal. ***(1 mark)*** __Fill answer here__.
-3. Using ```docker inspect c1``` and ```docker inspect c2``` inscpect the two network. What is the gateway of bluenet and rednet.? ***(1 mark)*** __Fill answer here__.
-4. What is the network address for the running container c1 and c2? ***(1 mark)*** __Fill answer here__.
-5. Using the command ```docker exec c1 ping c2```, which basically tries to do a ping from container c1 to c2. Are you able to ping? Show your output . ***(1 mark)*** __Fill answer here__.
+2. Explore the network using the command ```docker network ls```, show the output of your terminal. ***(1 mark)*** __@kucengtergolek ➜ /workspaces/OSProject (main) $ docker network ls
+NETWORK ID    NAME      DRIVER    SCOPE
+8db485304657  bluenet   bridge    local
+923e3892eedd  bridge    bridge    local
+cc9kcf8457u6  host      host      local
+mn9244uwrf78  none      null      local
+zf4h2uj392ia  rednet    bridge    local__.
+
+3. Using ```docker inspect c1``` and ```docker inspect c2``` inscpect the two network. What is the gateway of bluenet and rednet.? ***(1 mark)*** __C1 Bluenet Gateway: 172.18.0.1
+C2 Rednet Gateway: 172.19.0.1__.
+
+4. What is the network address for the running container c1 and c2? ***(1 mark)*** __C1 - Bluenet  ("IPAddress": "172.18.0.2")
+C2 - Rednet ("IPAddress": "172.19.0.2")__.
+
+5. Using the command ```docker exec c1 ping c2```, which basically tries to do a ping from container c1 to c2. Are you able to ping? Show your output . ***(1 mark)*** __Cannot ping, bad address C2
+@kucengtergolek ➜ /workspaces/OSProject (main) $ docker exec c1 ping c2
+ping: bad address 'c2'__.
 
 ## Bridging two SUB Networks
 1. Let's try this again by creating a network to bridge the two containers in the two subnetworks
@@ -501,8 +514,26 @@ docker exec c1 ping c2
 ```
 ***Questions:***
 
-1. Are you able to ping? Show your output . ***(1 mark)*** __Fill answer here__.
-2. What is different from the previous ping in the section above? ***(1 mark)*** __Fill answer here__.
+1. Are you able to ping? Show your output . ***(1 mark)*** __Yes, we can ping
+@kucengtergolek ➜ /workspaces/OSProject (main) $ docker exec c1 ping c2
+PING c2 (172.20.0.3): 56 data bytes
+64 bytes from 172.20.0.3: seq=0 ttl=64 time=0.142 ms
+64 bytes from 172.20.0.3: seq=1 ttl=64 time=0.067 ms
+64 bytes from 172.20.0.3: seq=2 ttl=64 time=0.081 ms
+64 bytes from 172.20.0.3: seq=3 ttl=64 time=0.114 ms
+64 bytes from 172.20.0.3: seq=4 ttl=64 time=0.082 ms
+64 bytes from 172.20.0.3: seq=5 ttl=64 time=0.071 ms
+64 bytes from 172.20.0.3: seq=6 ttl=64 time=0.066 ms
+64 bytes from 172.20.0.3: seq=7 ttl=64 time=0.063 ms
+64 bytes from 172.20.0.3: seq=8 ttl=64 time=0.072 ms
+64 bytes from 172.20.0.3: seq=9 ttl=64 time=0.061 ms
+64 bytes from 172.20.0.3: seq=10 ttl=64 time=0.074 ms
+64 bytes from 172.20.0.3: seq=11 ttl=64 time=0.069 ms
+64 bytes from 172.20.0.3: seq=12 ttl=64 time=0.062 ms
+64 bytes from 172.20.0.3: seq=13 ttl=64 time=0.073 ms__.
+
+2. What is different from the previous ping in the section above? ***(1 mark)*** __Previous Ping: The ping command failed because c1 and c2 were on separate networks.
+Current Ping: The ping command succeeded because c1 and c2 are now connected through the bridgenet network, allowing communication between them.__.
 
 ## Intermediate Level (10 marks bonus)
 
@@ -645,8 +676,52 @@ You have now set up a Node.js application in a Docker container on nodejsnet net
 
 ***Questions:***
 
-1. What is the output of step 5 above, explain the error? ***(1 mark)*** __Fill answer here__.
-2. Show the instruction needed to make this work. ***(1 mark)*** __Fill answer here__.
+1. What is the output of step 5 above, explain the error? ***(1 mark)*** __Cannot GET /
+The output for step 5 is Server Error (http://localhost:3000/random) , 
+The "Server Error" response from our Node.js application when accessing http://localhost:3000/random via curl indicates that there's an issue with the Node.js application's ability to fetch and return data from the MySQL database__.
+
+2. Show the instruction needed to make this work. ***(1 mark)*** __Follow the steps:
+
+We need to insert the table in the database , 
+
+1. Access the MySQL Container:
+ Access the shell of your running MySQL container using the docker exec command. Assuming your MySQL container is named mysql-container, run:
+
+docker exec -it mysql-container bash
+
+2. Connect to MySQL:
+Once inside the MySQL container shell, connect to the MySQL server using the mysql client. Use the following command:
+
+mysql -u root -p
+Replace root with your MySQL user if different, and enter your MySQL root password when prompted.
+
+3. Execute SQL Commands:
+With the MySQL prompt (mysql>), execute the SQL commands to create the mytable and insert data:
+
+
+CREATE TABLE mytable (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  value VARCHAR(255) NOT NULL
+);
+
+INSERT INTO mytable (name, value) VALUES ('example1', 'value1'), ('example2', 'value2'), ('example3', 'value3');
+These commands create the mytable with columns id, name, and value, and insert three rows of sample data.
+
+4. Verify Operations:
+  Verify that the table and data were created successfully by querying the table:
+
+SELECT * FROM mytable;
+(This should display the rows you inserted.)
+
+5. Exit MySQL and Container Shell:
+(To exit the MySQL client, type:)
+exit;
+
+To exit the MySQL container's shell, type:
+exit
+
+By following these steps, we can ensure that the mytable is properly set up and populated within our MySQL container. This setup is crucial for our Node.js application (nodejs-app) to correctly interact with the MySQL database when we make requests to fetch random rows__.
 
 
 
