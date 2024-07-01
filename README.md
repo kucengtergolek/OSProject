@@ -415,14 +415,24 @@ At the terminal, create a new directory called **myroot**, and run a instance of
 
 ***Questions:***
 
-1. Check the permission of the files created in myroot, what user and group is the files created in docker container on the host virtual machine? . ***(2 mark)*** __Fill answer here__.
+1. Check the permission of the files created in myroot, what user and group is the files created in docker container on the host virtual machine? . ***(2 mark)*** __User and group are root:root.__.
 2. Can you change the permission of the files to user codespace.  You will need this to be able to commit and get points for this question. ***(2 mark)***
 ```bash
 //use sudo and chown
 sudo chown -R codespace:codespace myroot
 
 ```
-*** __Fill answer here__.***
+*** __
+Yes, you can change by following these steps: 
+
+1-Navigate to the Parent Directory:
+cd /workspaces/OSProject
+
+2-Change Ownership:
+sudo chown -R codespace:codespace myroot
+
+3-Verify the Change:
+ls -l myroot__.***
 
 ## You are on your own, create your own static webpage
 
@@ -448,9 +458,12 @@ docker run --detach -v /workspaces/OSProject/webpage:/usr/local/apache2/htdocs/ 
 
 ***Questions:***
 
-1. What is the permission of folder /usr/local/apache/htdocs and what user and group owns the folder? . ***(2 mark)*** __Fill answer here__.
-2. What port is the apache web server running. ***(1 mark)*** __Fill answer here__.
-3. What port is open for http protocol on the host machine? ***(1 mark)*** __Fill answer here__.
+1. What is the permission of folder /usr/local/apache/htdocs and what user and group owns the folder? . ***(2 mark)*** __Permissions: drwxr-xr-x
+User and Group: root:root__.
+
+2. What port is the apache web server running. ***(1 mark)*** __Port 80__.
+
+3. What port is open for http protocol on the host machine? ***(1 mark)*** __Port 8080__.
 
 ## Create SUB Networks
 
@@ -469,7 +482,10 @@ docker run -itd --net rednet --name c2 busybox sh
 ```
 ***Questions:***
 
-1. Describe what is busybox and what is command switch **--name** is for? . ***(2 mark)*** __Fill answer here__.
+1. Describe what is busybox and what is command switch **--name** is for? . ***(2 mark)*** __BusyBox: BusyBox combines tiny versions of many common UNIX utilities into a single small executable, providing minimalist replacements for most of the utilities you usually find in GNU coreutils, util-linux, etc.
+
+--name: The --name switch assigns a custom name to the container for easy reference__.
+
 2. Explore the network using the command ```docker network ls```, show the output of your terminal. ***(1 mark)*** __Fill answer here__.
 3. Using ```docker inspect c1``` and ```docker inspect c2``` inscpect the two network. What is the gateway of bluenet and rednet.? ***(1 mark)*** __Fill answer here__.
 4. What is the network address for the running container c1 and c2? ***(1 mark)*** __Fill answer here__.
